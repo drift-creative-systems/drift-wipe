@@ -1,0 +1,63 @@
+/*
+ * Drift: Wipe settings screen.
+ * Accent: sky #0ea5e9 for the mark; #0369a1 for text and focus (AA on white).
+ */
+
+.drift-wipe {
+	--drift-wipe-accent: #0ea5e9;
+	--drift-wipe-accent-strong: #0369a1;
+	--drift-wipe-border: #dcdcde;
+	max-width: 960px;
+}
+
+.drift-wipe__title {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.drift-wipe__mark {
+	display: inline-flex;
+	color: var(--drift-wipe-accent);
+}
+
+.drift-wipe__card {
+	margin-top: 16px;
+	padding: 4px 20px 12px;
+	background: #fff;
+	border: 1px solid var(--drift-wipe-border);
+	border-radius: 8px;
+}
+
+.drift-wipe__intro {
+	margin: 16px 0 0;
+	padding-left: 12px;
+	border-left: 3px solid var(--drift-wipe-accent);
+}
+
+.drift-wipe .form-table th {
+	width: 160px;
+}
+
+.drift-wipe select:focus,
+.drift-wipe input[type="checkbox"]:focus {
+	border-color: var(--drift-wipe-accent-strong);
+	box-shadow: 0 0 0 1px var(--drift-wipe-accent-strong);
+}
+
+.drift-wipe .button-primary {
+	background: var(--drift-wipe-accent-strong);
+	border-color: var(--drift-wipe-accent-strong);
+}
+
+.drift-wipe .button-primary:hover,
+.drift-wipe .button-primary:focus {
+	background: #075985;
+	border-color: #075985;
+}
+
+@media (max-width: 782px) {
+	.drift-wipe__card {
+		padding: 4px 12px 12px;
+	}
+}

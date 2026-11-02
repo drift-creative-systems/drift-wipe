@@ -1,0 +1,121 @@
+/**
+ * Drift: Wipe
+ *
+ * Full-screen overlay played on load (entrance) and on internal link
+ * click (exit), see wipe.js. All three styles share the same left/right
+ * panel markup (printed on wp_body_open by the plugin). "fade" and
+ * "slide-up" only animate the left panel, full width; the right panel is
+ * used by "curtain" only.
+ *
+ * The entrance runs as a CSS animation the moment the overlay paints, so
+ * there's no flash of uncovered content while the script loads. The exit
+ * is triggered by the script adding .is-leaving, which swaps in the *Out
+ * keyframes; changing the animation-name restarts it.
+ */
+
+/* Reserve the scrollbar gutter so locking scroll on the body (below)
+   never changes the content width. Without it the page jumps sideways
+   when the scrollbar comes back after the entrance. */
+html {
+  scrollbar-gutter: stable;
+}
+
+body.has-drift-wipe {
+  overflow: hidden;
+}
+
+.drift-wipe-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  pointer-events: none;
+}
+
+.drift-wipe-overlay.is-leaving {
+  pointer-events: auto;
+}
+
+.drift-wipe-overlay__panel {
+  position: absolute;
+  inset: 0;
+  background-color: var(--drift-wipe-colour, #111111);
+}
+
+/* ---------- Fade ---------- */
+.drift-wipe-overlay[data-wipe-style="fade"] .drift-wipe-overlay__panel--right {
+  display: none;
+}
+.drift-wipe-overlay[data-wipe-style="fade"] .drift-wipe-overlay__panel--left {
+  animation: driftWipeFadeIn .6s ease forwards;
+}
+.drift-wipe-overlay[data-wipe-style="fade"].is-leaving .drift-wipe-overlay__panel--left {
+  animation: driftWipeFadeOut .5s ease forwards;
+}
+@keyframes driftWipeFadeIn {
+  from { opacity: 1; visibility: visible; }
+  to   { opacity: 0; visibility: hidden; }
+}
+@keyframes driftWipeFadeOut {
+  from { opacity: 0; visibility: visible; }
+  to   { opacity: 1; visibility: visible; }
+}
+
+/* ---------- Slide Up ---------- */
+.drift-wipe-overlay[data-wipe-style="slide-up"] .drift-wipe-overlay__panel--right {
+  display: none;
+}
+.drift-wipe-overlay[data-wipe-style="slide-up"] .drift-wipe-overlay__panel--left {
+  animation: driftWipeSlideIn .7s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.drift-wipe-overlay[data-wipe-style="slide-up"].is-leaving .drift-wipe-overlay__panel--left {
+  animation: driftWipeSlideOut .6s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+@keyframes driftWipeSlideIn {
+  from { transform: translateY(0); visibility: visible; }
+  to   { transform: translateY(-100%); visibility: hidden; }
+}
+@keyframes driftWipeSlideOut {
+  from { transform: translateY(100%); visibility: visible; }
+  to   { transform: translateY(0); visibility: visible; }
+}
+
+/* ---------- Curtain ---------- */
+.drift-wipe-overlay[data-wipe-style="curtain"] .drift-wipe-overlay__panel--left {
+  right: 50%;
+  animation: driftWipeCurtainLeftIn .8s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.drift-wipe-overlay[data-wipe-style="curtain"] .drift-wipe-overlay__panel--right {
+  left: 50%;
+  animation: driftWipeCurtainRightIn .8s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.drift-wipe-overlay[data-wipe-style="curtain"].is-leaving .drift-wipe-overlay__panel--left {
+  animation: driftWipeCurtainLeftOut .6s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.drift-wipe-overlay[data-wipe-style="curtain"].is-leaving .drift-wipe-overlay__panel--right {
+  animation: driftWipeCurtainRightOut .6s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+@keyframes driftWipeCurtainLeftIn {
+  from { transform: translateX(0); visibility: visible; }
+  to   { transform: translateX(-100%); visibility: hidden; }
+}
+@keyframes driftWipeCurtainRightIn {
+  from { transform: translateX(0); visibility: visible; }
+  to   { transform: translateX(100%); visibility: hidden; }
+}
+@keyframes driftWipeCurtainLeftOut {
+  from { transform: translateX(-100%); visibility: visible; }
+  to   { transform: translateX(0); visibility: visible; }
+}
+@keyframes driftWipeCurtainRightOut {
+  from { transform: translateX(100%); visibility: visible; }
+  to   { transform: translateX(0); visibility: visible; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drift-wipe-overlay {
+    display: none;
+  }
+  body.has-drift-wipe {
+    overflow: visible;
+  }
+}
