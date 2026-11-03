@@ -15,15 +15,20 @@
  * under the 900 ms safety timeout in wipe.js.
  */
 
-/* Reserve the scrollbar gutter so locking scroll on the body (below)
-   never changes the content width. Without it the page jumps sideways
-   when the scrollbar comes back after the entrance. */
-html {
-  scrollbar-gutter: stable;
-}
-
-body.has-drift-wipe {
+/* Lock scrolling during the entrance. wipe.js removes .has-drift-wipe
+   when the entrance ends; if the script never runs (JS off, blocked or
+   broken), the driftWipeUnlock animation lifts the lock after 1.5 s
+   anyway. It's on html, not body, so it can't replace a theme's own body
+   animation. The scrollbar gutter is reserved only while locked, so the
+   content width doesn't jump when the scrollbar comes back. Browsers
+   without :has() simply don't lock. */
+html:has(> body.has-drift-wipe) {
   overflow: hidden;
+  scrollbar-gutter: stable;
+  animation: driftWipeUnlock 0s 1.5s forwards;
+}
+@keyframes driftWipeUnlock {
+  to { overflow: visible; }
 }
 
 .drift-wipe-overlay {
@@ -248,7 +253,8 @@ body.has-drift-wipe {
   .drift-wipe-overlay {
     display: none;
   }
-  body.has-drift-wipe {
+  html:has(> body.has-drift-wipe) {
     overflow: visible;
+    animation: none;
   }
 }

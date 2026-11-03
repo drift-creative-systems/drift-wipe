@@ -16,6 +16,9 @@
 	$(function () {
 		var $overlay = $('#drift-wipe-overlay');
 		if (!$overlay.length) {
+			// Overlay missing (e.g. removed by another script): make sure
+			// the scroll lock doesn't outlive it.
+			$('body').removeClass('has-drift-wipe');
 			return;
 		}
 
@@ -28,6 +31,12 @@
 
 		var overlayEl = $overlay.get(0);
 		var navigating = false;
+		var resetTimer = null;
+
+		// Links that usually download a file rather than load a page. The
+		// browser stays on this page afterwards, so there's nothing to
+		// reveal it again.
+		var fileLink = /\.(pdf|zip|rar|7z|gz|tar|dmg|exe|msi|apk|docx?|xlsx?|pptx?|odt|ods|csv|rtf|epub|mp3|wav|m4a|mp4|mov|avi|webm)$/i;
 
 		function clearEntrance() {
 			$overlay.css('pointer-events', 'none');
@@ -78,6 +87,8 @@
 				href.indexOf('wp-login.php') !== -1 ||
 				link.target ||
 				link.hasAttribute('download') ||
+				fileLink.test(link.pathname) ||
+				link.search.indexOf('download_file=') !== -1 ||
 				link.classList.contains('no-transition') ||
 				link.hostname !== window.location.hostname ||
 				e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0
@@ -100,6 +111,13 @@
 				}
 				finished = true;
 				window.location.href = href;
+
+				// If this page is still here after a few seconds, the click
+				// didn't navigate (a file download the filter above missed,
+				// or a "leave this page?" prompt that was cancelled). Play
+				// the entrance again so the overlay doesn't stay stuck.
+				// pagehide cancels this when the page really unloads.
+				resetTimer = setTimeout(reset, 4000);
 			};
 
 			// Where the exit starts, for styles that use it (Circle Reveal).
@@ -123,13 +141,24 @@
 			setTimeout(go, 900);
 		});
 
+		// Clears the "leaving" state. Removing .is-leaving swaps the
+		// entrance keyframes back in, which reveals the page again.
+		function reset() {
+			clearTimeout(resetTimer);
+			navigating = false;
+			$overlay.removeClass('is-leaving').css('pointer-events', 'none');
+		}
+
+		$(window).on('pagehide', function () {
+			clearTimeout(resetTimer);
+		});
+
 		// When the page comes back from the back/forward cache, clear any
 		// "leaving" state so the overlay doesn't stay over the page.
 		$(window).on('pageshow', function (e) {
 			var evt = e.originalEvent || e;
 			if (evt.persisted) {
-				navigating = false;
-				$overlay.removeClass('is-leaving').css('pointer-events', 'none');
+				reset();
 			}
 		});
 	});

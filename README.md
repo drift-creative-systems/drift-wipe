@@ -14,10 +14,13 @@ The user-facing documentation is [readme.txt](readme.txt), which WordPress.org d
 
 - **Entrance** (page load) is a CSS animation on the overlay, so there's no flash of uncovered content while the script loads.
 - **Exit** (internal link click) is triggered by `assets/wipe.js`: it cancels the click, adds `.is-leaving` to the overlay (which swaps in the exit keyframes), waits for `animationend` or 900 ms, whichever comes first, then sets `window.location.href`. Before that it sets `--drift-wipe-x` / `--drift-wipe-y` to the click point (the link's centre for keyboard clicks), which Circle Reveal grows from. Keep every exit animation under 900 ms.
-- Skipped: `#` anchors and same-page hash links, `mailto:` / `tel:` / `javascript:`, `target` set, `download`, `wp-admin` / `wp-login.php`, other hosts, modified or non-left clicks, clicks another handler already cancelled, and links with the `no-transition` class.
+- Skipped: `#` anchors and same-page hash links, `mailto:` / `tel:` / `javascript:`, `target` set, `download`, links to common file types (`.pdf`, `.zip`, `.docx`, media…) and WooCommerce `download_file=` URLs, `wp-admin` / `wp-login.php`, other hosts, modified or non-left clicks, clicks another handler already cancelled, and links with the `no-transition` class.
+- If the page is still there 4 s after the exit (a download the filter missed, or a cancelled "leave this page?" prompt), `.is-leaving` is removed and the entrance plays again. `pagehide` cancels that timer on a real navigation.
+- Scroll is locked on `html:has(> body.has-drift-wipe)` during the entrance, with the scrollbar gutter reserved so the width doesn't jump. The script removes the class when the entrance ends; without JS, a `driftWipeUnlock` animation lifts the lock after 1.5 s.
 - `prefers-reduced-motion: reduce` removes the overlay and the scroll lock.
 - On `pageshow` with `event.persisted` (back/forward cache) the leaving state is cleared, so the overlay never stays stuck over the page.
-- Overlay markup is printed on `wp_body_open`, so the theme must call `wp_body_open()`.
+- Overlay markup is printed on `wp_body_open`. Themes that don't call `wp_body_open()` get it at the start of `wp_footer` instead (it only prints once).
+- `drift-wipe.php` holds the header, the duplicate-install guard and the constants; everything else is in `includes/plugin.php`. Keep functions out of the main file: PHP declares a file's top-level functions before running it, so the guard's `return` can't stop them redeclaring.
 - Front-end assets, overlay and the `has-drift-wipe` body class are all gated by `drift_wipe_is_active()`, cached per request.
 
 | Front end | Name |

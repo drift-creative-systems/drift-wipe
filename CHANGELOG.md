@@ -8,6 +8,17 @@ All notable changes to this project are documented here. The format is based on 
 - Six transition styles: Slide Down, Slide Left, Slide Right, Shutter (top and bottom panels), Diagonal (clip-path wipe) and Circle Reveal (grows from the click point, or the link's centre for keyboard clicks).
 - `drift_wipe_styles` filter to add or remove styles. `none` is always kept as the first option.
 - `wipe.js` sets `--drift-wipe-x` / `--drift-wipe-y` on the overlay before the exit animation.
+- Themes that don't call `wp_body_open()` get the overlay in `wp_footer` instead.
+
+### Changed
+- Plugin code moved from `drift-wipe.php` to `includes/plugin.php`.
+- Scroll lock moved from `body` to `html:has(> body.has-drift-wipe)`, and `scrollbar-gutter: stable` now applies only while it's locked instead of on every page.
+- Plugin URI now points to the GitHub repository instead of the Author URI.
+
+### Fixed
+- The page could stay unscrollable when the theme doesn't call `wp_body_open()` or JavaScript doesn't run. The lock now lifts after 1.5 s without JS.
+- The overlay could stay over the page after clicking a file link (PDF, zip, WooCommerce download) or cancelling a "leave this page?" prompt. File links are now skipped, and the page is revealed again if it's still there 4 s after the exit.
+- The duplicate install guard didn't prevent the "Cannot redeclare" fatal error.
 
 ## [1.0.0] - 2026-11-02
 

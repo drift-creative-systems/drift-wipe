@@ -67,7 +67,9 @@ Drift Creative Systems Ltd. Registered in England and Wales, company number 1754
 
 = Nothing happens when I click a link =
 
-Check that a style other than None is chosen. The overlay is added straight after the opening `<body>` tag, so your theme needs to call `wp_body_open()`. All default themes and block themes do, but some older themes don't. Ask the theme author to add it.
+Check that a style other than None is chosen, and clear your page cache if you use one.
+
+The overlay is added straight after the opening `<body>` tag through `wp_body_open()`. All default themes and block themes call it. If your theme doesn't, the overlay is added in the footer instead, so the transition still works, but the entrance can start a little late on long pages. Asking the theme author to add `wp_body_open()` fixes that.
 
 = How do I stop one link playing the transition? =
 
@@ -90,6 +92,9 @@ Yes. After changing the settings, clear your page cache so visitors get the new 
 = 1.1.0 =
 * New styles: Slide Down, Slide Left, Slide Right, Shutter, Diagonal and Circle Reveal.
 * New `drift_wipe_styles` filter for adding or removing styles.
+* Works with themes that don't call `wp_body_open()`.
+* Fix: the page could stay unscrollable if the theme doesn't call `wp_body_open()` or JavaScript doesn't run.
+* Fix: the overlay could stay over the page after clicking a link to a file download.
 
 = 1.0.0 =
 * First public release: Fade, Slide Up and Curtain transitions, overlay colour, front page option and per-link opt-out.
