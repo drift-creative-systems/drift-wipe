@@ -5,18 +5,25 @@ All notable changes to this project are documented here. The format is based on 
 ## [1.1.0] - 2026-11-03
 
 ### Added
-- Six transition styles: Slide Down, Slide Left, Slide Right, Shutter (top and bottom panels), Diagonal (clip-path wipe) and Circle Reveal (grows from the click point, or the link's centre for keyboard clicks).
-- `drift_wipe_styles` filter to add or remove styles. `none` is always kept as the first option.
-- `wipe.js` sets `--drift-wipe-x` / `--drift-wipe-y` on the overlay before the exit animation.
+- Three transition styles: Slide Down, Slide Left and Slide Right.
+- Settings screen shows each style as a card with a live preview. It plays on hover or keyboard focus and follows the colour and speed fields as they change. Nothing plays with reduced motion on.
+- Speed setting (`drift_wipe_speed`: `fast` / `normal` / `slow`), applied as the `--drift-wipe-speed` multiplier on every animation and the script's safety timeouts.
+- "Turn off the page transition" checkbox on the edit screen of every public post type (`_drift_wipe_disabled` post meta). The page plays no entrance or exit, and links to it from other pages skip the exit.
+- A line on the settings screen pointing to the add-on's extra styles, hidden with the `drift_wipe_show_addon_note` filter.
+- Hooks for add-ons: `drift_wipe_styles` filter (`none` is always kept first), `drift_wipe_colour` filter, and a `drift_wipe_leave` jQuery event on `document` before each exit.
+- `wipe.js` sets `--drift-wipe-x` / `--drift-wipe-y` (the click point, or the link's centre for keyboard clicks) on the overlay before the exit, for styles that start from it.
 - Themes that don't call `wp_body_open()` get the overlay in `wp_footer` instead.
+- Readme FAQs on reduced motion, turning it off per page, and Safari's toolbar tint.
 
 ### Changed
 - Plugin code moved from `drift-wipe.php` to `includes/plugin.php`.
 - Scroll lock moved from `body` to `html:has(> body.has-drift-wipe)`, and `scrollbar-gutter: stable` now applies only while it's locked instead of on every page.
+- The right overlay panel is hidden by default and shown only for Curtain, so styles added by filter don't need to hide it.
 - Plugin URI now points to the GitHub repository instead of the Author URI.
 
 ### Fixed
-- The page could stay unscrollable when the theme doesn't call `wp_body_open()` or JavaScript doesn't run. The lock now lifts after 1.5 s without JS.
+- Safari could keep the overlay colour in its toolbar after the page had loaded. The overlay is now `display: none` (`.is-idle`) between transitions.
+- The page could stay unscrollable when the theme doesn't call `wp_body_open()` or JavaScript doesn't run. The lock now lifts after 1.5 s (scaled by the speed) without JS.
 - The overlay could stay over the page after clicking a file link (PDF, zip, WooCommerce download) or cancelling a "leave this page?" prompt. File links are now skipped, and the page is revealed again if it's still there 4 s after the exit.
 - The duplicate install guard didn't prevent the "Cannot redeclare" fatal error.
 

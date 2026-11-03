@@ -40,7 +40,8 @@
 }
 
 .drift-wipe select:focus,
-.drift-wipe input[type="checkbox"]:focus {
+.drift-wipe input[type="checkbox"]:focus,
+.drift-wipe input[type="radio"]:focus {
 	border-color: var(--drift-wipe-accent-strong);
 	box-shadow: 0 0 0 1px var(--drift-wipe-accent-strong);
 }
@@ -54,6 +55,82 @@
 .drift-wipe .button-primary:focus {
 	background: #075985;
 	border-color: #075985;
+}
+
+/* Style cards. Each preview is the real overlay markup (wipe.css), held
+   inside a small mock page instead of covering the screen. */
+.drift-wipe-styles {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: 12px;
+	max-width: 720px;
+}
+
+.drift-wipe-style {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 8px;
+	background: #fff;
+	border: 1px solid var(--drift-wipe-border);
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.drift-wipe-style:hover {
+	border-color: #8c8f94;
+}
+
+.drift-wipe-style:has(input:checked) {
+	border-color: var(--drift-wipe-accent-strong);
+	box-shadow: 0 0 0 1px var(--drift-wipe-accent-strong);
+}
+
+.drift-wipe-style:has(input:focus-visible) {
+	outline: 2px solid var(--drift-wipe-accent-strong);
+	outline-offset: 2px;
+}
+
+.drift-wipe-style__preview {
+	position: relative;
+	display: block;
+	aspect-ratio: 16 / 10;
+	overflow: hidden;
+	background-color: #f6f7f7;
+	/* A heading and two lines of text, so there's something to cover. */
+	background-image:
+		linear-gradient(#c3c4c7, #c3c4c7),
+		linear-gradient(#dcdcde, #dcdcde),
+		linear-gradient(#dcdcde, #dcdcde);
+	background-position: 14% 30%, 14% 56%, 14% 70%;
+	background-repeat: no-repeat;
+	background-size: 50% 8px, 72% 5px, 60% 5px;
+	border-radius: 4px;
+}
+
+.drift-wipe-style__preview .drift-wipe-overlay {
+	position: absolute;
+	z-index: auto;
+}
+
+.drift-wipe-style__name {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-weight: 600;
+}
+
+.drift-wipe-style__name input[type="radio"] {
+	margin: 0;
+}
+
+.drift-wipe__addon-note {
+	margin: 8px 0 0;
+	color: #50575e;
+}
+
+.drift-wipe__addon-note a {
+	color: var(--drift-wipe-accent-strong);
 }
 
 @media (max-width: 782px) {
