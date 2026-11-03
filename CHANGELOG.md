@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-11-03
+
+### Added
+- Six transition styles: Slide Down, Slide Left, Slide Right, Shutter (top and bottom panels), Diagonal (clip-path wipe) and Circle Reveal (grows from the click point, or the link's centre for keyboard clicks).
+- `drift_wipe_styles` filter to add or remove styles. `none` is always kept as the first option.
+- `wipe.js` sets `--drift-wipe-x` / `--drift-wipe-y` on the overlay before the exit animation.
+
 ## [1.0.0] - 2026-11-02
 
 First release as **Drift: Wipe**, a free WordPress.org plugin by Drift Creative Systems. Based on Bonsai Page Transitions 1.2.1, which carries on separately for Bonsai client sites. There is no data migration between the two.

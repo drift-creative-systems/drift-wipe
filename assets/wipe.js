@@ -4,8 +4,10 @@
  * The animation itself runs in CSS (wipe.css). This script does two
  * things: cleans up after the entrance animation, and plays the exit
  * animation on internal link clicks before letting the browser do its
- * normal, real navigation. There's no AJAX content swap, so it works with
- * every plugin, shortcode and analytics setup as-is.
+ * normal, real navigation. It also passes the click position to the CSS
+ * as --drift-wipe-x / -y for styles that start from it. There's no AJAX
+ * content swap, so it works with every plugin, shortcode and analytics
+ * setup as-is.
  *
  * Does nothing when the overlay markup isn't on the page (style set to
  * "None", or the front page is skipped; see drift_wipe_is_active()).
@@ -99,6 +101,20 @@
 				finished = true;
 				window.location.href = href;
 			};
+
+			// Where the exit starts, for styles that use it (Circle Reveal).
+			// Keyboard activation reports no pointer position (detail 0),
+			// so use the centre of the link instead.
+			var evt = e.originalEvent || e;
+			var x = evt.clientX;
+			var y = evt.clientY;
+			if (!evt.detail) {
+				var rect = link.getBoundingClientRect();
+				x = rect.left + rect.width / 2;
+				y = rect.top + rect.height / 2;
+			}
+			overlayEl.style.setProperty('--drift-wipe-x', Math.round(x) + 'px');
+			overlayEl.style.setProperty('--drift-wipe-y', Math.round(y) + 'px');
 
 			$overlay.css('pointer-events', 'auto').one('animationend webkitAnimationEnd', go);
 			$overlay.addClass('is-leaving');

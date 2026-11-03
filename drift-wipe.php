@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       Drift: Wipe
  * Plugin URI:        https://driftcreativesystems.co.uk/
- * Description:       Plays a full-screen wipe (fade, slide up or curtain) when a visitor clicks a link to another page on your site. The real page loads underneath, so it works with any theme, cache or analytics setup.
- * Version:           1.0.0
+ * Description:       Plays a full-screen wipe (fade, slide, curtain, shutter, diagonal or circle) when a visitor clicks a link to another page on your site. The real page loads underneath, so it works with any theme, cache or analytics setup.
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Drift Creative Systems
@@ -36,7 +36,7 @@ if ( defined( 'DRIFT_WIPE_VERSION' ) ) {
 	return;
 }
 
-define( 'DRIFT_WIPE_VERSION', '1.0.0' );
+define( 'DRIFT_WIPE_VERSION', '1.1.0' );
 define( 'DRIFT_WIPE_FILE', __FILE__ );
 define( 'DRIFT_WIPE_URL', plugin_dir_url( __FILE__ ) );
 define( 'DRIFT_WIPE_OPTION_GROUP', 'drift_wipe_settings' );
@@ -49,16 +49,36 @@ define( 'DRIFT_WIPE_DEFAULT_COLOUR', '#111111' );
 
 /**
  * Transition styles. Keys match the data-wipe-style values in assets/wipe.css.
+ * "none" is always first and can't be filtered out.
  *
  * @return array<string, string>
  */
 function drift_wipe_get_styles() {
-	return array(
-		'none'     => __( 'None (disabled)', 'drift-wipe' ),
-		'fade'     => __( 'Fade', 'drift-wipe' ),
-		'slide-up' => __( 'Slide Up', 'drift-wipe' ),
-		'curtain'  => __( 'Curtain', 'drift-wipe' ),
+	$styles = array(
+		'fade'        => __( 'Fade', 'drift-wipe' ),
+		'slide-up'    => __( 'Slide Up', 'drift-wipe' ),
+		'slide-down'  => __( 'Slide Down', 'drift-wipe' ),
+		'slide-left'  => __( 'Slide Left', 'drift-wipe' ),
+		'slide-right' => __( 'Slide Right', 'drift-wipe' ),
+		'curtain'     => __( 'Curtain', 'drift-wipe' ),
+		'shutter'     => __( 'Shutter', 'drift-wipe' ),
+		'diagonal'    => __( 'Diagonal', 'drift-wipe' ),
+		'circle'      => __( 'Circle Reveal', 'drift-wipe' ),
 	);
+
+	/**
+	 * Filters the transition styles offered on the settings screen.
+	 *
+	 * Add a style by adding a key => label pair, then enqueue CSS that
+	 * animates .drift-wipe-overlay[data-wipe-style="your-key"]. If a style
+	 * is removed while it's the saved choice, the transition stops running.
+	 *
+	 * @param array<string, string> $styles Style key => label.
+	 */
+	$styles = (array) apply_filters( 'drift_wipe_styles', $styles );
+	unset( $styles['none'] );
+
+	return array( 'none' => __( 'None (disabled)', 'drift-wipe' ) ) + $styles;
 }
 
 /**

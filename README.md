@@ -2,7 +2,7 @@
 
 # Drift: Wipe
 
-Free WordPress plugin by **Drift Creative Systems**. Plays a full-screen wipe (Fade, Slide Up or Curtain) when a visitor clicks a link to another page on the site. There's no AJAX content swap: the browser does a real navigation and the overlay covers and reveals it, so it works with any theme, plugin, cache or analytics setup as-is.
+Free WordPress plugin by **Drift Creative Systems**. Plays a full-screen wipe (Fade, Slide Up/Down/Left/Right, Curtain, Shutter, Diagonal or Circle Reveal) when a visitor clicks a link to another page on the site. There's no AJAX content swap: the browser does a real navigation and the overlay covers and reveals it, so it works with any theme, plugin, cache or analytics setup as-is.
 
 - WordPress.org slug: `drift-wipe` (submission pending)
 - Licence: GPL-2.0-or-later
@@ -13,7 +13,7 @@ The user-facing documentation is [readme.txt](readme.txt), which WordPress.org d
 ## How it works
 
 - **Entrance** (page load) is a CSS animation on the overlay, so there's no flash of uncovered content while the script loads.
-- **Exit** (internal link click) is triggered by `assets/wipe.js`: it cancels the click, adds `.is-leaving` to the overlay (which swaps in the exit keyframes), waits for `animationend` or 900 ms, whichever comes first, then sets `window.location.href`.
+- **Exit** (internal link click) is triggered by `assets/wipe.js`: it cancels the click, adds `.is-leaving` to the overlay (which swaps in the exit keyframes), waits for `animationend` or 900 ms, whichever comes first, then sets `window.location.href`. Before that it sets `--drift-wipe-x` / `--drift-wipe-y` to the click point (the link's centre for keyboard clicks), which Circle Reveal grows from. Keep every exit animation under 900 ms.
 - Skipped: `#` anchors and same-page hash links, `mailto:` / `tel:` / `javascript:`, `target` set, `download`, `wp-admin` / `wp-login.php`, other hosts, modified or non-left clicks, clicks another handler already cancelled, and links with the `no-transition` class.
 - `prefers-reduced-motion: reduce` removes the overlay and the scroll lock.
 - On `pageshow` with `event.persisted` (back/forward cache) the leaving state is cleared, so the overlay never stays stuck over the page.
@@ -26,6 +26,7 @@ The user-facing documentation is [readme.txt](readme.txt), which WordPress.org d
 | Panels | `.drift-wipe-overlay__panel--left` / `--right` |
 | Body class (scroll lock during entrance) | `has-drift-wipe` |
 | Colour | CSS custom property `--drift-wipe-colour` |
+| Click point (exit) | `--drift-wipe-x` / `--drift-wipe-y`, set inline on the overlay |
 | Opt-out class | `no-transition` |
 
 ## Settings
@@ -34,7 +35,7 @@ Settings → Drift: Wipe (`options-general.php?page=drift-wipe`). Three options,
 
 | Option | Type | Default |
 |---|---|---|
-| `drift_wipe_style` | `none` / `fade` / `slide-up` / `curtain` | `none` |
+| `drift_wipe_style` | `none` / `fade` / `slide-up` / `slide-down` / `slide-left` / `slide-right` / `curtain` / `shutter` / `diagonal` / `circle` (plus any added by `drift_wipe_styles`) | `none` |
 | `drift_wipe_colour` | hex colour | `#111111` |
 | `drift_wipe_skip_front_page` | boolean | `true` |
 
@@ -44,6 +45,7 @@ Settings → Drift: Wipe (`options-general.php?page=drift-wipe`). Three options,
 |---|---|---|
 | `drift_wipe_capability` | filter | Capability to view and save the settings. Default `manage_options` |
 | `drift_wipe_active` | filter | Turn the transition on or off for the current request: `( $active, $style )` |
+| `drift_wipe_styles` | filter | Add or remove styles: `key => label`. A new key needs its own CSS for `.drift-wipe-overlay[data-wipe-style="key"]`. `none` is always kept |
 
 These are the extension points for a paid add-on, sold outside WordPress.org. Nothing in this plugin is gated.
 

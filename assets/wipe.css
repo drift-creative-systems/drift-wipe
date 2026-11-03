@@ -2,15 +2,17 @@
  * Drift: Wipe
  *
  * Full-screen overlay played on load (entrance) and on internal link
- * click (exit), see wipe.js. All three styles share the same left/right
- * panel markup (printed on wp_body_open by the plugin). "fade" and
- * "slide-up" only animate the left panel, full width; the right panel is
- * used by "curtain" only.
+ * click (exit), see wipe.js. Every style shares the same left/right
+ * panel markup (printed on wp_body_open by the plugin). Single-panel
+ * styles (fade, the slides, diagonal, circle) only animate the left
+ * panel, full screen. "curtain" splits the panels left and right,
+ * "shutter" splits them top and bottom.
  *
  * The entrance runs as a CSS animation the moment the overlay paints, so
  * there's no flash of uncovered content while the script loads. The exit
  * is triggered by the script adding .is-leaving, which swaps in the *Out
- * keyframes; changing the animation-name restarts it.
+ * keyframes; changing the animation-name restarts it. Keep every exit
+ * under the 900 ms safety timeout in wipe.js.
  */
 
 /* Reserve the scrollbar gutter so locking scroll on the body (below)
@@ -41,10 +43,18 @@ body.has-drift-wipe {
   background-color: var(--drift-wipe-colour, #111111);
 }
 
-/* ---------- Fade ---------- */
-.drift-wipe-overlay[data-wipe-style="fade"] .drift-wipe-overlay__panel--right {
+/* Single-panel styles don't use the right panel. */
+.drift-wipe-overlay[data-wipe-style="fade"] .drift-wipe-overlay__panel--right,
+.drift-wipe-overlay[data-wipe-style="slide-up"] .drift-wipe-overlay__panel--right,
+.drift-wipe-overlay[data-wipe-style="slide-down"] .drift-wipe-overlay__panel--right,
+.drift-wipe-overlay[data-wipe-style="slide-left"] .drift-wipe-overlay__panel--right,
+.drift-wipe-overlay[data-wipe-style="slide-right"] .drift-wipe-overlay__panel--right,
+.drift-wipe-overlay[data-wipe-style="diagonal"] .drift-wipe-overlay__panel--right,
+.drift-wipe-overlay[data-wipe-style="circle"] .drift-wipe-overlay__panel--right {
   display: none;
 }
+
+/* ---------- Fade ---------- */
 .drift-wipe-overlay[data-wipe-style="fade"] .drift-wipe-overlay__panel--left {
   animation: driftWipeFadeIn .6s ease forwards;
 }
@@ -60,10 +70,8 @@ body.has-drift-wipe {
   to   { opacity: 1; visibility: visible; }
 }
 
-/* ---------- Slide Up ---------- */
-.drift-wipe-overlay[data-wipe-style="slide-up"] .drift-wipe-overlay__panel--right {
-  display: none;
-}
+/* ---------- Slide Up ----------
+   Enters from the bottom on exit, leaves off the top on entrance. */
 .drift-wipe-overlay[data-wipe-style="slide-up"] .drift-wipe-overlay__panel--left {
   animation: driftWipeSlideIn .7s cubic-bezier(.65, 0, .35, 1) forwards;
 }
@@ -77,6 +85,57 @@ body.has-drift-wipe {
 @keyframes driftWipeSlideOut {
   from { transform: translateY(100%); visibility: visible; }
   to   { transform: translateY(0); visibility: visible; }
+}
+
+/* ---------- Slide Down ----------
+   Enters from the top on exit, leaves off the bottom on entrance. */
+.drift-wipe-overlay[data-wipe-style="slide-down"] .drift-wipe-overlay__panel--left {
+  animation: driftWipeSlideDownIn .7s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.drift-wipe-overlay[data-wipe-style="slide-down"].is-leaving .drift-wipe-overlay__panel--left {
+  animation: driftWipeSlideDownOut .6s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+@keyframes driftWipeSlideDownIn {
+  from { transform: translateY(0); visibility: visible; }
+  to   { transform: translateY(100%); visibility: hidden; }
+}
+@keyframes driftWipeSlideDownOut {
+  from { transform: translateY(-100%); visibility: visible; }
+  to   { transform: translateY(0); visibility: visible; }
+}
+
+/* ---------- Slide Left ----------
+   Enters from the right on exit, leaves off the left on entrance. */
+.drift-wipe-overlay[data-wipe-style="slide-left"] .drift-wipe-overlay__panel--left {
+  animation: driftWipeSlideLeftIn .7s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.drift-wipe-overlay[data-wipe-style="slide-left"].is-leaving .drift-wipe-overlay__panel--left {
+  animation: driftWipeSlideLeftOut .6s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+@keyframes driftWipeSlideLeftIn {
+  from { transform: translateX(0); visibility: visible; }
+  to   { transform: translateX(-100%); visibility: hidden; }
+}
+@keyframes driftWipeSlideLeftOut {
+  from { transform: translateX(100%); visibility: visible; }
+  to   { transform: translateX(0); visibility: visible; }
+}
+
+/* ---------- Slide Right ----------
+   Enters from the left on exit, leaves off the right on entrance. */
+.drift-wipe-overlay[data-wipe-style="slide-right"] .drift-wipe-overlay__panel--left {
+  animation: driftWipeSlideRightIn .7s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.drift-wipe-overlay[data-wipe-style="slide-right"].is-leaving .drift-wipe-overlay__panel--left {
+  animation: driftWipeSlideRightOut .6s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+@keyframes driftWipeSlideRightIn {
+  from { transform: translateX(0); visibility: visible; }
+  to   { transform: translateX(100%); visibility: hidden; }
+}
+@keyframes driftWipeSlideRightOut {
+  from { transform: translateX(-100%); visibility: visible; }
+  to   { transform: translateX(0); visibility: visible; }
 }
 
 /* ---------- Curtain ---------- */
@@ -109,6 +168,80 @@ body.has-drift-wipe {
 @keyframes driftWipeCurtainRightOut {
   from { transform: translateX(100%); visibility: visible; }
   to   { transform: translateX(0); visibility: visible; }
+}
+
+/* ---------- Shutter ----------
+   Curtain turned on its side: the left panel is the top half, the right
+   panel the bottom half. */
+.drift-wipe-overlay[data-wipe-style="shutter"] .drift-wipe-overlay__panel--left {
+  bottom: 50%;
+  animation: driftWipeShutterTopIn .8s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.drift-wipe-overlay[data-wipe-style="shutter"] .drift-wipe-overlay__panel--right {
+  top: 50%;
+  animation: driftWipeShutterBottomIn .8s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.drift-wipe-overlay[data-wipe-style="shutter"].is-leaving .drift-wipe-overlay__panel--left {
+  animation: driftWipeShutterTopOut .6s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.drift-wipe-overlay[data-wipe-style="shutter"].is-leaving .drift-wipe-overlay__panel--right {
+  animation: driftWipeShutterBottomOut .6s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+@keyframes driftWipeShutterTopIn {
+  from { transform: translateY(0); visibility: visible; }
+  to   { transform: translateY(-100%); visibility: hidden; }
+}
+@keyframes driftWipeShutterBottomIn {
+  from { transform: translateY(0); visibility: visible; }
+  to   { transform: translateY(100%); visibility: hidden; }
+}
+@keyframes driftWipeShutterTopOut {
+  from { transform: translateY(-100%); visibility: visible; }
+  to   { transform: translateY(0); visibility: visible; }
+}
+@keyframes driftWipeShutterBottomOut {
+  from { transform: translateY(100%); visibility: visible; }
+  to   { transform: translateY(0); visibility: visible; }
+}
+
+/* ---------- Diagonal ----------
+   A slanted band sweeping left to right, drawn with clip-path. The
+   polygon is a parallelogram whose bottom edge sits 30% left of its top
+   edge; at full cover it overhangs both sides so no corner shows. Both
+   directions move the same way: on exit the leading edge crosses the
+   screen, on entrance the trailing edge follows it off. */
+.drift-wipe-overlay[data-wipe-style="diagonal"] .drift-wipe-overlay__panel--left {
+  animation: driftWipeDiagonalIn .7s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.drift-wipe-overlay[data-wipe-style="diagonal"].is-leaving .drift-wipe-overlay__panel--left {
+  animation: driftWipeDiagonalOut .6s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+@keyframes driftWipeDiagonalIn {
+  from { clip-path: polygon(0 0, 130% 0, 100% 100%, -30% 100%); visibility: visible; }
+  to   { clip-path: polygon(130% 0, 130% 0, 100% 100%, 100% 100%); visibility: hidden; }
+}
+@keyframes driftWipeDiagonalOut {
+  from { clip-path: polygon(0 0, 0 0, -30% 100%, -30% 100%); visibility: visible; }
+  to   { clip-path: polygon(0 0, 130% 0, 100% 100%, -30% 100%); visibility: visible; }
+}
+
+/* ---------- Circle Reveal ----------
+   On exit a circle grows from the click point (--drift-wipe-x / -y, set
+   by wipe.js; centre if unset). On entrance it shrinks to the centre.
+   A 150% radius covers the screen from any point, corners included. */
+.drift-wipe-overlay[data-wipe-style="circle"] .drift-wipe-overlay__panel--left {
+  animation: driftWipeCircleIn .7s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+.drift-wipe-overlay[data-wipe-style="circle"].is-leaving .drift-wipe-overlay__panel--left {
+  animation: driftWipeCircleOut .7s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+@keyframes driftWipeCircleIn {
+  from { clip-path: circle(150% at 50% 50%); visibility: visible; }
+  to   { clip-path: circle(0 at 50% 50%); visibility: hidden; }
+}
+@keyframes driftWipeCircleOut {
+  from { clip-path: circle(0 at var(--drift-wipe-x, 50%) var(--drift-wipe-y, 50%)); visibility: visible; }
+  to   { clip-path: circle(150% at var(--drift-wipe-x, 50%) var(--drift-wipe-y, 50%)); visibility: visible; }
 }
 
 @media (prefers-reduced-motion: reduce) {

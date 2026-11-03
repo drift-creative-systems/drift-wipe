@@ -4,11 +4,11 @@ Tags: page transitions, transition, animation, page loader, fade
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Full-screen page transitions for any theme. Fade, slide up or curtain wipe between pages, with real page loads underneath.
+Full-screen page transitions for any theme. Fade, slide, curtain, shutter, diagonal or circle wipes, with real page loads underneath.
 
 == Description ==
 
@@ -16,11 +16,17 @@ Drift: Wipe plays a full-screen wipe when a visitor clicks a link to another pag
 
 It doesn't swap content with AJAX. The browser still does a normal page load and the overlay just covers it, so it works with any theme, page builder, caching plugin or analytics setup without changes.
 
-Three styles:
+Nine styles:
 
 * **Fade**: the overlay fades in, then fades out on the new page.
 * **Slide Up**: the overlay slides up from the bottom, then off the top.
+* **Slide Down**: the overlay slides down from the top, then off the bottom.
+* **Slide Left**: the overlay slides in from the right, then off to the left.
+* **Slide Right**: the overlay slides in from the left, then off to the right.
 * **Curtain**: two panels close from the sides, then open again.
+* **Shutter**: two panels close from the top and bottom, then open again.
+* **Diagonal**: an angled wipe sweeps across the screen from left to right.
+* **Circle Reveal**: a circle grows from where the visitor clicked, then shrinks away to the centre on the new page.
 
 Features:
 
@@ -41,6 +47,7 @@ Drift: Wipe doesn't connect to any external service, set cookies, track visitors
 
 * `drift_wipe_capability` (filter): the capability needed to manage the settings. Default `manage_options`.
 * `drift_wipe_active` (filter): return `false` to turn the transition off on the current page, e.g. a checkout or landing page. Receives `( $active, $style )`.
+* `drift_wipe_styles` (filter): add or remove transition styles. Receives an array of `key => label`. For a new style, also enqueue CSS that animates `.drift-wipe-overlay[data-wipe-style="your-key"]`. None is always kept.
 
 Source code, issues and pull requests: [github.com/drift-creative-systems/drift-wipe](https://github.com/drift-creative-systems/drift-wipe).
 
@@ -80,10 +87,17 @@ Yes. After changing the settings, clear your page cache so visitors get the new 
 
 == Changelog ==
 
+= 1.1.0 =
+* New styles: Slide Down, Slide Left, Slide Right, Shutter, Diagonal and Circle Reveal.
+* New `drift_wipe_styles` filter for adding or removing styles.
+
 = 1.0.0 =
 * First public release: Fade, Slide Up and Curtain transitions, overlay colour, front page option and per-link opt-out.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Six new transition styles, including Circle Reveal from the click point.
 
 = 1.0.0 =
 First public release.
