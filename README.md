@@ -2,7 +2,7 @@
 
 # Drift: Wipe
 
-Free WordPress plugin by **Drift Creative Systems**. Plays a full-screen wipe (Fade, Slide Up/Down/Left/Right or Curtain) when a visitor clicks a link to another page on the site. There's no AJAX content swap: the browser does a real navigation and the overlay covers and reveals it, so it works with any theme, plugin, cache or analytics setup as-is.
+Free WordPress plugin by **Drift Creative Systems**. Plays a full-screen wipe (Fade, Slide Up/Down/Left/Right, Curtain, Shutter, Diagonal or Circle Reveal) when a visitor clicks a link to another page on the site. There's no AJAX content swap: the browser does a real navigation and the overlay covers and reveals it, so it works with any theme, plugin, cache or analytics setup as-is.
 
 - WordPress.org slug: `drift-wipe` (submission pending)
 - Licence: GPL-2.0-or-later
@@ -46,7 +46,7 @@ Four options, the `_drift_wipe_disabled` post meta and the `drift_wipe_excluded_
 
 | Option | Type | Default |
 |---|---|---|
-| `drift_wipe_style` | `none` / `fade` / `slide-up` / `slide-down` / `slide-left` / `slide-right` / `curtain` (plus any added by `drift_wipe_styles`) | `none` |
+| `drift_wipe_style` | `none` / `fade` / `slide-up` / `slide-down` / `slide-left` / `slide-right` / `curtain` / `shutter` / `diagonal` / `circle` (plus any added by `drift_wipe_styles`) | `none` |
 | `drift_wipe_speed` | `fast` / `normal` / `slow` | `normal` |
 | `drift_wipe_colour` | hex colour | `#111111` |
 | `drift_wipe_skip_front_page` | boolean | `true` |
@@ -57,12 +57,11 @@ Four options, the `_drift_wipe_disabled` post meta and the `drift_wipe_excluded_
 |---|---|---|
 | `drift_wipe_capability` | filter | Capability to view and save the settings. Default `manage_options` |
 | `drift_wipe_active` | filter | Turn the transition on or off for the current request: `( $active, $style )` |
-| `drift_wipe_styles` | filter | Add or remove styles: `key => label`. A new key needs its own CSS for `.drift-wipe-overlay[data-wipe-style="key"]`, enqueued on the front end and on the settings screen (`settings_page_drift-wipe`) for its preview. Only the left panel shows by default; show `.drift-wipe-overlay__panel--right` for two-panel styles. `none` is always kept |
+| `drift_wipe_styles` | filter | Add or remove styles: `key => label`. A new key needs its own CSS for `.drift-wipe-overlay[data-wipe-style="key"]`, enqueued on the front end and on the settings screen (`settings_page_drift-wipe`) for its preview. Only the left panel shows by default (Curtain and Shutter show both); show `.drift-wipe-overlay__panel--right` for two-panel styles. `none` is always kept |
 | `drift_wipe_colour` | filter | Overlay colour on the front end. Sanitised as hex afterwards |
-| `drift_wipe_show_addon_note` | filter | Return `false` to hide the add-on line under the style cards |
 | `drift_wipe_leave` | jQuery event on `document` | Fires before each exit: `( event, overlayEl, link )`. E.g. set `--drift-wipe-colour` on the overlay for colour cycling |
 
-These are the extension points for the paid add-on, sold outside WordPress.org. Nothing in this plugin is gated or shown locked. The add-on provides Diagonal, Circle Reveal and Shutter (moved out of the free plugin before 1.1.0 was released) and colour cycling.
+These are the extension points for the paid add-on, sold outside WordPress.org. Nothing in this plugin is gated or shown locked, and every built-in style is free. The add-on provides colour cycling.
 
 ## Development
 

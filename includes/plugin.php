@@ -25,6 +25,9 @@ function drift_wipe_get_styles() {
 		'slide-left'  => __( 'Slide Left', 'drift-wipe' ),
 		'slide-right' => __( 'Slide Right', 'drift-wipe' ),
 		'curtain'     => __( 'Curtain', 'drift-wipe' ),
+		'shutter'     => __( 'Shutter', 'drift-wipe' ),
+		'diagonal'    => __( 'Diagonal', 'drift-wipe' ),
+		'circle'      => __( 'Circle Reveal', 'drift-wipe' ),
 	);
 
 	/**
@@ -368,37 +371,7 @@ function drift_wipe_render_style_field() {
 		<p class="description" id="drift_wipe_style-description">
 			<?php esc_html_e( 'Plays when a visitor clicks a link to another page on this site. Hover over or tab to a style to preview it. Choose "None" to turn it off.', 'drift-wipe' ); ?>
 		</p>
-		<?php drift_wipe_render_addon_note(); ?>
 	</fieldset>
-	<?php
-}
-
-/**
- * One line pointing to the add-on's extra styles. Shown on this plugin's
- * settings screen only, and nothing in this plugin depends on the add-on.
- *
- * @return void
- */
-function drift_wipe_render_addon_note() {
-	/**
-	 * Filters whether the settings screen mentions the add-on's extra styles.
-	 * The add-on returns false once it's active.
-	 *
-	 * @param bool $show Default true.
-	 */
-	if ( ! apply_filters( 'drift_wipe_show_addon_note', true ) ) {
-		return;
-	}
-	?>
-	<p class="drift-wipe__addon-note">
-		<?php
-		printf(
-			/* translators: %s: link to the add-on */
-			esc_html__( 'More styles, including Diagonal, Circle Reveal and Shutter, come with the %s.', 'drift-wipe' ),
-			'<a href="' . esc_url( 'https://driftcreativesystems.co.uk/' ) . '">' . esc_html__( 'Drift: Wipe add-on', 'drift-wipe' ) . '</a>'
-		);
-		?>
-	</p>
 	<?php
 }
 

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Drift: Wipe
  * Plugin URI:        https://github.com/drift-creative-systems/drift-wipe
- * Description:       Plays a full-screen wipe (fade, slide or curtain) when a visitor clicks a link to another page on your site. The real page loads underneath, so it works with any theme, cache or analytics setup.
+ * Description:       Plays a full-screen wipe (fade, slide, curtain, shutter, diagonal or circle) when a visitor clicks a link to another page on your site. The real page loads underneath, so it works with any theme, cache or analytics setup.
  * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
